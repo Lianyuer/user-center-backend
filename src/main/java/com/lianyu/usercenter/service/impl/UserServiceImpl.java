@@ -151,7 +151,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * @param originUser 数据库查询到的数据
      * @return 返回脱敏后的数据对象
      */
+    @Override
     public User getSafeUser(User originUser) {
+        if (originUser == null) {
+            return null;
+        }
         User safetyUser = new User();
         safetyUser.setId(originUser.getId());
         safetyUser.setNickName(originUser.getNickName());
