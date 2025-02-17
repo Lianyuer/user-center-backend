@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.lianyu.usercenter.constant.UserConstant.ADMIN_ROLE;
+import static com.lianyu.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户接口
@@ -71,6 +72,23 @@ public class UserController {
             return null;
         }
         return userService.userLogin(userAccount, userPassword, request);
+    }
+
+    /**
+     * 获取当前登录用户信息接口
+     *
+     * @param request HttpServletRequest 对象，用于获取客户端请求信息
+     * @return 返回用户对象
+     * @author lianyu
+     */
+    @GetMapping("/current")
+    public User getCurrentUser(HttpServletRequest request) {
+        User currentUser = (User) request.getSession().getAttribute(USER_LOGIN_STATE);
+        Long id = currentUser.getId();
+        log.info("获取当前登录用户信息，id:{}", id);
+        User user = userService.getCurrentUser(id);
+        // 返回脱敏后的用户信息
+        return userService.getSafeUser(user);
     }
 
     /**

@@ -200,6 +200,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return effectedRowCount >= 1;
     }
 
+    /**
+     * 获取当前登录用户信息
+     *
+     * @param id 用户id
+     * @return 返回用户对象
+     * @author lianyu
+     */
+    @Override
+    public User getCurrentUser(Long id) {
+        return userMapper.selectById(id);
+    }
+
 }
 
 

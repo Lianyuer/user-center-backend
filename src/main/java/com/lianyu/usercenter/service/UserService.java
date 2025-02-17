@@ -55,4 +55,13 @@ public interface UserService extends IService<User> {
      * @author lianyu
      */
     Boolean deleteUser(long id);
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @param id 用户id
+     * @return 返回用户对象
+     * @author lianyu
+     */
+    User getCurrentUser(Long id);
 }
