@@ -112,7 +112,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         // 账号长度和密码长度校验
-        if (userAccount.length() < 8) {
+        if (userAccount.length() < 4) {
             return null;
         }
         if (userPassword.length() < 8) {
