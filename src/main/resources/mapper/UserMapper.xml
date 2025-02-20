@@ -18,12 +18,14 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
             <result property="userRole" column="user_role" jdbcType="INTEGER"/>
+            <result property="planetCode" column="planet_code" jdbcType="VARCHAR"/>
     </resultMap>
+
     <sql id="Base_Column_List">
         id,nick_name,avatar_url,
         gender,user_account,user_password,
         state,phone_number,email,
         create_time,update_time,is_deleted,
-        user_role
+        user_role,planet_code
     </sql>
 </mapper>

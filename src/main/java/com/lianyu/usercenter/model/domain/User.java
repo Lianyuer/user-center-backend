@@ -1,11 +1,9 @@
 package com.lianyu.usercenter.model.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +12,7 @@ import java.util.Date;
  */
 @TableName(value ="user")
 @Data
-public class User {
+public class User implements Serializable {
     /**
      * 
      */
@@ -82,6 +80,14 @@ public class User {
      */
     private Integer userRole;
 
+    /**
+     * 星球编号
+     */
+    private String planetCode;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -106,7 +112,8 @@ public class User {
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getIsDeleted() == null ? other.getIsDeleted() == null : this.getIsDeleted().equals(other.getIsDeleted()))
-            && (this.getUserRole() == null ? other.getUserRole() == null : this.getUserRole().equals(other.getUserRole()));
+            && (this.getUserRole() == null ? other.getUserRole() == null : this.getUserRole().equals(other.getUserRole()))
+            && (this.getPlanetCode() == null ? other.getPlanetCode() == null : this.getPlanetCode().equals(other.getPlanetCode()));
     }
 
     @Override
@@ -126,6 +133,7 @@ public class User {
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getIsDeleted() == null) ? 0 : getIsDeleted().hashCode());
         result = prime * result + ((getUserRole() == null) ? 0 : getUserRole().hashCode());
+        result = prime * result + ((getPlanetCode() == null) ? 0 : getPlanetCode().hashCode());
         return result;
     }
 
@@ -148,6 +156,8 @@ public class User {
         sb.append(", updateTime=").append(updateTime);
         sb.append(", isDeleted=").append(isDeleted);
         sb.append(", userRole=").append(userRole);
+        sb.append(", planetCode=").append(planetCode);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
     }

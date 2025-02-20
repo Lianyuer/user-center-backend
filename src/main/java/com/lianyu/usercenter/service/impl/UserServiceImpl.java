@@ -3,6 +3,7 @@ package com.lianyu.usercenter.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lianyu.usercenter.model.domain.User;
+import com.lianyu.usercenter.model.domain.request.UserRegisterRequest;
 import com.lianyu.usercenter.service.UserService;
 import com.lianyu.usercenter.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -40,16 +41,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     /**
      * 用户注册
      *
-     * @param userAccount   用户账号
-     * @param userPassword  用户密码
-     * @param checkPassword 校验密码
+     * @param userRegisterRequest 用户注册请求体
      * @return 注册成功返回用户 id
      * @author lianyu
      */
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public long userRegister(UserRegisterRequest userRegisterRequest) {
         // 非空校验
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+        String userAccount = userRegisterRequest.getUserAccount();
+        String userPassword = userRegisterRequest.getUserPassword();
+        String checkPassword = userRegisterRequest.getCheckPassword();
+        String planetCode = userRegisterRequest.getPlanetCode();
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)) {
             return -1;
         }
         // 账户长度不小于4
@@ -59,6 +62,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 密码长度不小于8
         if (userPassword.length() < 8) {
             return -3;
+        }
+        // 星球编号长度不大于5
+        if (planetCode.length() > 5) {
+            return -8;
         }
         // 账户不包含特殊字符
         String validPattern = "^[a-zA-Z0-9_]{4,}$";
@@ -77,12 +84,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (userCount > 0) {
             return -6;
         }
+        // 星球编号不能重复
+        queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("planet_code", planetCode);
+        userCount = userMapper.selectCount(queryWrapper);
+        if (userCount > 0) {
+            return -7;
+        }
         // 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 向数据库插入用户数据
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
+        user.setPlanetCode(planetCode);
         int effectedRowCount = userMapper.insert(user);
 
         /**
@@ -165,6 +180,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setPhoneNumber(originUser.getPhoneNumber());
         safetyUser.setEmail(originUser.getEmail());
         safetyUser.setUserRole(originUser.getUserRole());
+        safetyUser.setPlanetCode(originUser.getPlanetCode());
         safetyUser.setCreateTime(originUser.getCreateTime());
         return safetyUser;
     }

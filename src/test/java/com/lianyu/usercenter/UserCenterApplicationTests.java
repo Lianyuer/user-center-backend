@@ -2,6 +2,7 @@ package com.lianyu.usercenter;
 
 import com.lianyu.usercenter.mapper.UserMapper;
 import com.lianyu.usercenter.model.domain.User;
+import com.lianyu.usercenter.model.domain.request.UserRegisterRequest;
 import com.lianyu.usercenter.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,42 +37,93 @@ class UserCenterApplicationTests {
     @Test
     void testRegister() {
         System.out.println("----- test register ----");
+        UserRegisterRequest userRegisterRequest = new UserRegisterRequest();
         // 非空
         String userAccount = "admin";
         String userPassword = "";
         String checkPassword = "12345678";
-        System.out.println("1非空" + userServiceImpl.userRegister(userAccount, userPassword, checkPassword));
+        String planetCode = "1";
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("1非空" + userServiceImpl.userRegister(userRegisterRequest));
         // 账户不小于4位
         userAccount = "adm";
         userPassword = "12345678";
         checkPassword = "12345678";
-        System.out.println("2账户长度" + userServiceImpl.userRegister(userAccount, userPassword, checkPassword));
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("2账户长度" + userServiceImpl.userRegister(userRegisterRequest));
         // 密码长度不小于8位
         userAccount = "admin";
         userPassword = "123456";
+        checkPassword = "123456";
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("3密码长度" + userServiceImpl.userRegister(userRegisterRequest));
+        // 星球编号长度不大于5位
+        userPassword = "12345678";
         checkPassword = "12345678";
-        System.out.println("3密码长度" + userServiceImpl.userRegister(userAccount, userPassword, checkPassword));
+        planetCode = "123456";
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("8星球编号长度" + userServiceImpl.userRegister(userRegisterRequest));
         // 账户不能重复
         userAccount = "myname";
         userPassword = "12345678";
         checkPassword = "12345678";
-        System.out.println("6账户重复" + userServiceImpl.userRegister(userAccount, userPassword, checkPassword));
+        planetCode = "12345";
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("6账户重复" + userServiceImpl.userRegister(userRegisterRequest));
+        // 星球编号不能重复
+        userAccount = "xxxxyyy";
+        userPassword = "12345678";
+        checkPassword = "12345678";
+        planetCode = "123";
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("7星球编号重复" + userServiceImpl.userRegister(userRegisterRequest));
         // 账户不能包含特殊字符
         userAccount = "adm【】";
         userPassword = "12345678";
         checkPassword = "12345678";
-        System.out.println("4账户特殊字符" + userServiceImpl.userRegister(userAccount, userPassword, checkPassword));
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("4账户特殊字符" + userServiceImpl.userRegister(userRegisterRequest));
         // 密码和校验密码相同
         userAccount = "admin";
         userPassword = "12345678";
         checkPassword = "123458";
-        System.out.println("5密码校验" + userServiceImpl.userRegister(userAccount, userPassword, checkPassword));
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        System.out.println("5密码校验" + userServiceImpl.userRegister(userRegisterRequest));
 
         // 插入成功
-        userAccount = "success12";
+        userAccount = "admin22";
         userPassword = "12345678";
         checkPassword = "12345678";
-        long num = userServiceImpl.userRegister(userAccount, userPassword, checkPassword);
+        planetCode = "123";
+        userRegisterRequest.setUserAccount(userAccount);
+        userRegisterRequest.setUserPassword(userPassword);
+        userRegisterRequest.setCheckPassword(checkPassword);
+        userRegisterRequest.setPlanetCode(planetCode);
+        long num = userServiceImpl.userRegister(userRegisterRequest);
         if (num > 0) {
             System.out.println("注册成功，id：" + num);
         } else {
