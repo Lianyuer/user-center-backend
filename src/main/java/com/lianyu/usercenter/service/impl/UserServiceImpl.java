@@ -212,6 +212,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return userMapper.selectById(id);
     }
 
+    /**
+     * 用户注销
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public Integer logout(HttpServletRequest request) {
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return 1;
+    }
+
 }
 
 

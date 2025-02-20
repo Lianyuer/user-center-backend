@@ -64,4 +64,13 @@ public interface UserService extends IService<User> {
      * @author lianyu
      */
     User getCurrentUser(Long id);
+
+    /**
+     * 用户注销
+     *
+     * @param request
+     * @return
+     * @author lianyu
+     */
+    Integer logout(HttpServletRequest request);
 }

@@ -75,6 +75,22 @@ public class UserController {
     }
 
     /**
+     * 用户注销
+     *
+     * @param request
+     * @return
+     * @author lianyu
+     */
+    @PostMapping("/logout")
+    public Integer logout(HttpServletRequest request) {
+        log.info("用户注销:{}", request);
+        if (request == null) {
+            return null;
+        }
+        return userService.logout(request);
+    }
+
+    /**
      * 获取当前登录用户信息接口
      *
      * @param request HttpServletRequest 对象，用于获取客户端请求信息
