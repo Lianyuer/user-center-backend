@@ -1,5 +1,7 @@
 package com.lianyu.usercenter.controller;
 
+import com.lianyu.usercenter.common.BaseResponse;
+import com.lianyu.usercenter.common.ResultUtils;
 import com.lianyu.usercenter.constant.UserConstant;
 import com.lianyu.usercenter.model.domain.User;
 import com.lianyu.usercenter.model.domain.request.UserLoginRequest;
@@ -38,7 +40,7 @@ public class UserController {
      * @author lianyu
      */
     @PostMapping("/register")
-    public Long register(@RequestBody UserRegisterRequest userRegisterRequest) {
+    public BaseResponse<Long> register(@RequestBody UserRegisterRequest userRegisterRequest) {
         log.info("用户注册请求体,{}", userRegisterRequest);
         if (userRegisterRequest == null) {
             return null;
@@ -50,7 +52,8 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)) {
             return null;
         }
-        return userService.userRegister(userRegisterRequest);
+        long res = userService.userRegister(userRegisterRequest);
+        return ResultUtils.success(res);
     }
 
     /**
@@ -62,7 +65,7 @@ public class UserController {
      * @author lianyu
      */
     @PostMapping("/login")
-    public User login(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<User> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         log.info("用户登录请求体,{}", userLoginRequest);
         if (userLoginRequest == null) {
             return null;
@@ -72,7 +75,8 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             return null;
         }
-        return userService.userLogin(userAccount, userPassword, request);
+        User user = userService.userLogin(userAccount, userPassword, request);
+        return ResultUtils.success(user);
     }
 
     /**
@@ -83,12 +87,13 @@ public class UserController {
      * @author lianyu
      */
     @PostMapping("/logout")
-    public Integer logout(HttpServletRequest request) {
+    public BaseResponse<Integer> logout(HttpServletRequest request) {
         log.info("用户注销:{}", request);
         if (request == null) {
             return null;
         }
-        return userService.logout(request);
+        Integer res = userService.logout(request);
+        return ResultUtils.success(res);
     }
 
     /**
@@ -99,13 +104,14 @@ public class UserController {
      * @author lianyu
      */
     @GetMapping("/current")
-    public User getCurrentUser(HttpServletRequest request) {
+    public BaseResponse<User> getCurrentUser(HttpServletRequest request) {
         User currentUser = (User) request.getSession().getAttribute(USER_LOGIN_STATE);
         Long id = currentUser.getId();
         log.info("获取当前登录用户信息，id:{}", id);
         User user = userService.getCurrentUser(id);
         // 返回脱敏后的用户信息
-        return userService.getSafeUser(user);
+        User safeUser = userService.getSafeUser(user);
+        return ResultUtils.success(safeUser);
     }
 
     /**
@@ -115,13 +121,14 @@ public class UserController {
      * @author lianyu
      */
     @GetMapping("/search")
-    public List<User> getUsers(String nickName, HttpServletRequest request) {
+    public BaseResponse<List<User>> getUsers(String nickName, HttpServletRequest request) {
         log.info("查询用户nickName参数:{}", nickName);
         // 仅管理员才能进行查询
         if (!isAdmin(request)) {
-            return new ArrayList<>();
+            return ResultUtils.success(new ArrayList<>());
         }
-        return userService.getUserList(nickName);
+        List<User> userList = userService.getUserList(nickName);
+        return ResultUtils.success(userList);
     }
 
     /**
@@ -132,16 +139,17 @@ public class UserController {
      * @author lianyu
      */
     @PostMapping("/delete")
-    public Boolean deleteUser(@RequestBody long id, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteUser(@RequestBody long id, HttpServletRequest request) {
         log.info("删除用户id参数:{}", id);
         // 仅管理员才能进行删除
         if (!isAdmin(request)) {
-            return false;
+            return ResultUtils.success(false);
         }
         if (id < 0) {
             return null;
         }
-        return userService.deleteUser(id);
+        Boolean res = userService.deleteUser(id);
+        return ResultUtils.success(res);
     }
 
     /**
@@ -150,6 +158,9 @@ public class UserController {
      * @return
      */
     private boolean isAdmin(HttpServletRequest request) {
+        if (request == null) {
+            return false;
+        }
         // 仅管理员才能进行查询和删除
         User user = (User) request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
         int userRole = user.getUserRole();
