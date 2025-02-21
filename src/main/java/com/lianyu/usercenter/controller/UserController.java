@@ -1,6 +1,7 @@
 package com.lianyu.usercenter.controller;
 
 import com.lianyu.usercenter.common.BaseResponse;
+import com.lianyu.usercenter.common.ErrorCode;
 import com.lianyu.usercenter.common.ResultUtils;
 import com.lianyu.usercenter.constant.UserConstant;
 import com.lianyu.usercenter.model.domain.User;
@@ -43,14 +44,14 @@ public class UserController {
     public BaseResponse<Long> register(@RequestBody UserRegisterRequest userRegisterRequest) {
         log.info("用户注册请求体,{}", userRegisterRequest);
         if (userRegisterRequest == null) {
-            return null;
+            return ResultUtils.error(ErrorCode.NULL_ERROR);
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
         String planetCode = userRegisterRequest.getPlanetCode();
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)) {
-            return null;
+            return ResultUtils.error(ErrorCode.NULL_ERROR);
         }
         long res = userService.userRegister(userRegisterRequest);
         return ResultUtils.success(res);
@@ -68,12 +69,12 @@ public class UserController {
     public BaseResponse<User> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         log.info("用户登录请求体,{}", userLoginRequest);
         if (userLoginRequest == null) {
-            return null;
+            return ResultUtils.error(ErrorCode.NULL_ERROR);
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            return ResultUtils.error(ErrorCode.NULL_ERROR);
         }
         User user = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(user);
@@ -90,7 +91,7 @@ public class UserController {
     public BaseResponse<Integer> logout(HttpServletRequest request) {
         log.info("用户注销:{}", request);
         if (request == null) {
-            return null;
+            return ResultUtils.error(ErrorCode.NULL_ERROR);
         }
         Integer res = userService.logout(request);
         return ResultUtils.success(res);
@@ -146,7 +147,7 @@ public class UserController {
             return ResultUtils.success(false);
         }
         if (id < 0) {
-            return null;
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
         Boolean res = userService.deleteUser(id);
         return ResultUtils.success(res);
