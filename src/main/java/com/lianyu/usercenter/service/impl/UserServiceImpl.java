@@ -2,6 +2,8 @@ package com.lianyu.usercenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lianyu.usercenter.common.ErrorCode;
+import com.lianyu.usercenter.exception.BusinessException;
 import com.lianyu.usercenter.model.domain.User;
 import com.lianyu.usercenter.model.domain.request.UserRegisterRequest;
 import com.lianyu.usercenter.service.UserService;
@@ -53,43 +55,51 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String checkPassword = userRegisterRequest.getCheckPassword();
         String planetCode = userRegisterRequest.getPlanetCode();
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)) {
-            return -1;
+            // return -1;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         // 账户长度不小于4
         if (userAccount.length() < 4) {
-            return -2;
+            // return -2;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号长度过短");
         }
         // 密码长度不小于8
         if (userPassword.length() < 8) {
-            return -3;
+            // return -3;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码长度过短");
         }
         // 星球编号长度不大于5
         if (planetCode.length() > 5) {
-            return -8;
+            // return -8;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "星球编号长度过长");
         }
         // 账户不包含特殊字符
         String validPattern = "^[a-zA-Z0-9_]{4,}$";
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (!matcher.matches()) {
-            return -4;
+            // return -4;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号格式错误");
         }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
-            return -5;
+            // return -5;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码和校验密码不一致");
         }
         // 账户不能重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account", userAccount);
         Long userCount = userMapper.selectCount(queryWrapper);
         if (userCount > 0) {
-            return -6;
+            // return -6;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号已存在");
         }
         // 星球编号不能重复
         queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("planet_code", planetCode);
         userCount = userMapper.selectCount(queryWrapper);
         if (userCount > 0) {
-            return -7;
+            // return -7;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "星球编号已存在");
         }
         // 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -106,7 +116,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
          *  直接返回错误
          */
         if (effectedRowCount < 1) {
-            return -1;
+            // return -1;
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
         return user.getId(); // 如果返回 null，由于 service 中返回类型为 long，会导致拆箱错误，所以在上面特殊处理下
     }

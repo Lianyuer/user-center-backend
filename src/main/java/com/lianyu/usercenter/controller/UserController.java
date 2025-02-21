@@ -4,6 +4,7 @@ import com.lianyu.usercenter.common.BaseResponse;
 import com.lianyu.usercenter.common.ErrorCode;
 import com.lianyu.usercenter.common.ResultUtils;
 import com.lianyu.usercenter.constant.UserConstant;
+import com.lianyu.usercenter.exception.BusinessException;
 import com.lianyu.usercenter.model.domain.User;
 import com.lianyu.usercenter.model.domain.request.UserLoginRequest;
 import com.lianyu.usercenter.model.domain.request.UserRegisterRequest;
@@ -69,12 +70,14 @@ public class UserController {
     public BaseResponse<User> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         log.info("用户登录请求体,{}", userLoginRequest);
         if (userLoginRequest == null) {
-            return ResultUtils.error(ErrorCode.NULL_ERROR);
+            // return ResultUtils.error(ErrorCode.NULL_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return ResultUtils.error(ErrorCode.NULL_ERROR);
+            // return ResultUtils.error(ErrorCode.NULL_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(user);
@@ -91,7 +94,8 @@ public class UserController {
     public BaseResponse<Integer> logout(HttpServletRequest request) {
         log.info("用户注销:{}", request);
         if (request == null) {
-            return ResultUtils.error(ErrorCode.NULL_ERROR);
+            // return ResultUtils.error(ErrorCode.NULL_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Integer res = userService.logout(request);
         return ResultUtils.success(res);
@@ -126,7 +130,8 @@ public class UserController {
         log.info("查询用户nickName参数:{}", nickName);
         // 仅管理员才能进行查询
         if (!isAdmin(request)) {
-            return ResultUtils.success(new ArrayList<>());
+            // return ResultUtils.success(new ArrayList<>());
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         List<User> userList = userService.getUserList(nickName);
         return ResultUtils.success(userList);
@@ -147,7 +152,8 @@ public class UserController {
             return ResultUtils.success(false);
         }
         if (id < 0) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+            // return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Boolean res = userService.deleteUser(id);
         return ResultUtils.success(res);
