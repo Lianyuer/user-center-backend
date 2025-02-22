@@ -135,20 +135,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 非空
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            // return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
         // 账号长度和密码长度校验
         if (userAccount.length() < 4) {
-            return null;
+            // return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号长度过短");
         }
         if (userPassword.length() < 8) {
-            return null;
+            // return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码长度过短");
         }
         // 账户不包含特殊字符
         String validPattern = "^[a-zA-Z0-9_]{4,}$";
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (!matcher.matches()) {
-            return null;
+            // return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不能出现特殊字符");
         }
         // 密码加密，和数据库中密文密码进行对比
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -159,7 +163,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 用户不存在
         if (user == null) {
             log.info("user login failed, userAccount cannot match userPassword");
-            return null;
+            // return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
         }
 
         // 用户数据脱敏
