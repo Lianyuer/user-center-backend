@@ -1,4 +1,8 @@
 -- auto-generated definition
+CREATE DATABASE ucenter
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
 create table user
 (
     id            bigint auto_increment
@@ -17,5 +21,7 @@ create table user
     user_role     int       default 0                 null comment '用户角色 0-普通用户 1-管理员',
     planet_code   varchar(512)                        null comment '星球编号'
 )
-    comment '用户表';
-
+    comment '用户表'
+    ENGINE=InnoDB
+    CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
